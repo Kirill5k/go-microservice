@@ -1,8 +1,8 @@
 package common
 
-func If[T any](cond bool, vtrue, vfalse T) T {
+func If[T any](cond bool, ifTrue, ifFalse T) T {
 	if cond {
-		return vtrue
+		return ifTrue
 	}
-	return vfalse
+	return ifFalse
 }

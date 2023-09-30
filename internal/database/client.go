@@ -9,15 +9,15 @@ import (
 	"time"
 )
 
-type DatabaseClient interface {
+type Client interface {
 	Ready() bool
 }
 
-type Client struct {
+type PostgresClient struct {
 	DB *gorm.DB
 }
 
-func (c Client) Ready() bool {
+func (c PostgresClient) Ready() bool {
 	var ready string
 	tx := c.DB.Raw("SELECT 1 as ready").Scan(&ready)
 	if tx.Error != nil {
@@ -26,7 +26,7 @@ func (c Client) Ready() bool {
 	return ready == "1"
 }
 
-func NewDatabaseClient(config DatabaseConfig) (DatabaseClient, error) {
+func NewPostgresClient(config DatabaseConfig) (Client, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		config.Host,
@@ -46,6 +46,5 @@ func NewDatabaseClient(config DatabaseConfig) (DatabaseClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := Client{db}
-	return client, nil
+	return PostgresClient{db}, nil
 }
