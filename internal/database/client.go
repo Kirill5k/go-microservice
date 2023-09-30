@@ -25,15 +25,21 @@ func (c Client) Ready() bool {
 	return ready == "1"
 }
 
-func NewDatabaseClient() (DatabaseClient, error) {
+func NewDatabaseClient(config DatabaseConfig) (DatabaseClient, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
-		"localhost",
-		"postgres",
-		"postgres",
-		"postgres",
-		5432,
-		"disable",
+		config.Host,
+		config.User,
+		config.Password,
+		config.DBName,
+		config.Port,
+		func() string {
+			if config.SSLMode {
+				return "disable"
+			} else {
+				return "enable"
+			}
+		}(),
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{TablePrefix: "wisdom."},
