@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"kirill5k/go/microservice/internal/common"
 	"time"
 )
 
@@ -33,13 +34,7 @@ func NewDatabaseClient(config DatabaseConfig) (DatabaseClient, error) {
 		config.Password,
 		config.DBName,
 		config.Port,
-		func() string {
-			if config.SSLMode {
-				return "disable"
-			} else {
-				return "enable"
-			}
-		}(),
+		common.If(config.SSLMode, "enable", "disable"),
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{TablePrefix: "wisdom."},
