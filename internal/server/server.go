@@ -9,21 +9,27 @@ import (
 
 type Server interface {
 	RegisterRoutes()
+	Start() error
 }
 
 type EchoServer struct {
-	echo *echo.Echo
+	echo   *echo.Echo
+	config ServerConfig
 }
 
 func (s *EchoServer) RegisterRoutes() {
 }
 
+func (s *EchoServer) Start() error {
+	if err := s.echo.Start(fmt.Sprintf(":%d", s.config.Port)); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("server shutdown occured: %s", err)
+		return err
+	}
+	return nil
+}
+
 func NewEchoServer(config ServerConfig) (Server, error) {
 	server := echo.New()
-	if err := server.Start(fmt.Sprintf(":%d", config.Port)); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("server shutdown occured: %s", err)
-		return nil, err
-	}
-	echoServer := &EchoServer{server}
+	echoServer := &EchoServer{server, config}
 	return echoServer, nil
 }
