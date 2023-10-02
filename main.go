@@ -14,8 +14,12 @@ func main() {
 	}
 	srv := server.NewEchoServer(server.DefaultConfig())
 
-	healthController := health.NewHealthController(db)
-	healthController.RegisterRoutes(srv)
+	controllers := []server.Controller{
+		health.NewHealthController(db),
+	}
+	for _, controller := range controllers {
+		controller.RegisterRoutes(srv)
+	}
 
 	if err := srv.Start(); err != nil {
 		log.Fatalf("failed to start http server: %s", err)
