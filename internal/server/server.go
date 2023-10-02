@@ -8,16 +8,13 @@ import (
 )
 
 type Server interface {
-	RegisterRoutes()
 	Start() error
+	AddRoute(method, path string, handler echo.HandlerFunc)
 }
 
 type EchoServer struct {
 	echo   *echo.Echo
 	config ServerConfig
-}
-
-func (s *EchoServer) RegisterRoutes() {
 }
 
 func (s *EchoServer) Start() error {
@@ -28,8 +25,11 @@ func (s *EchoServer) Start() error {
 	return nil
 }
 
+func (s *EchoServer) AddRoute(method, path string, handler echo.HandlerFunc) {
+	s.echo.Add(method, path, handler)
+}
+
 func NewEchoServer(config ServerConfig) (Server, error) {
-	server := echo.New()
-	echoServer := &EchoServer{server, config}
-	return echoServer, nil
+	server := &EchoServer{echo.New(), config}
+	return server, nil
 }
