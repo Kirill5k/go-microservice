@@ -14,7 +14,7 @@ type Server interface {
 
 type EchoServer struct {
 	echo   *echo.Echo
-	config ServerConfig
+	config Config
 }
 
 func (s *EchoServer) Start() error {
@@ -29,7 +29,7 @@ func (s *EchoServer) AddRoute(method, path string, handler echo.HandlerFunc) {
 	s.echo.Add(method, path, handler)
 }
 
-func NewEchoServer(config ServerConfig) (Server, error) {
+func NewEchoServer(config Config) Server {
 	server := &EchoServer{echo.New(), config}
-	return server, nil
+	return server
 }

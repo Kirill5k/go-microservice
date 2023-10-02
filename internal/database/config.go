@@ -1,6 +1,6 @@
 package database
 
-type DatabaseConfig struct {
+type Config struct {
 	Host     string
 	Port     int
 	DBName   string
@@ -9,8 +9,8 @@ type DatabaseConfig struct {
 	SSLMode  bool
 }
 
-func DefaultDatabaseConfig() DatabaseConfig {
-	return DatabaseConfig{
+func DefaultPostgresConfig() Config {
+	return Config{
 		Host:     "localhost",
 		Port:     5432,
 		DBName:   "postgres",
