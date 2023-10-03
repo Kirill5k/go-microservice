@@ -11,6 +11,10 @@ type Server interface {
 	AddRoute(method, path string, handler echo.HandlerFunc)
 }
 
+type RouteRegister interface {
+	RegisterRoutes(server Server)
+}
+
 type EchoServer struct {
 	echo   *echo.Echo
 	config Config

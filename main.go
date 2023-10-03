@@ -14,8 +14,8 @@ func main() {
 	}
 	srv := server.NewEchoServer(server.DefaultConfig())
 
-	controllers := []server.Controller{
-		health.NewHealthController(db),
+	controllers := []server.RouteRegister{
+		health.NewApi(db),
 	}
 	for _, controller := range controllers {
 		controller.RegisterRoutes(srv)

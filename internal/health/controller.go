@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-type HealthController struct {
+type Api struct {
 	dbClient database.Client
 }
 
-func (hc *HealthController) RegisterRoutes(server server.Server) {
+func (hc *Api) RegisterRoutes(server server.Server) {
 	readiness := func(ctx echo.Context) error {
 		isReady := hc.dbClient.Ready()
 		if isReady {
@@ -27,6 +27,6 @@ func (hc *HealthController) RegisterRoutes(server server.Server) {
 	server.AddRoute("GET", "/health/live", liveness)
 }
 
-func NewHealthController(dbClient database.Client) *HealthController {
-	return &HealthController{dbClient}
+func NewApi(dbClient database.Client) *Api {
+	return &Api{dbClient}
 }
