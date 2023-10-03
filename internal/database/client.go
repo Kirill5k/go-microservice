@@ -26,7 +26,7 @@ func (c *PostgresClient) Ready() bool {
 	return ready == "1"
 }
 
-func NewPostgresClient(config Config) (PostgresClient, error) {
+func NewPostgresClient(config Config) (*PostgresClient, error) {
 	var client PostgresClient
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
@@ -45,8 +45,8 @@ func NewPostgresClient(config Config) (PostgresClient, error) {
 		QueryFields: true,
 	})
 	if err != nil {
-		return client, err
+		return &client, err
 	}
 	client = PostgresClient{db}
-	return client, nil
+	return &client, nil
 }

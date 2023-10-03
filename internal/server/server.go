@@ -27,6 +27,6 @@ func (s *EchoServer) AddRoute(method, path string, handler echo.HandlerFunc) {
 	s.echo.Add(method, path, handler)
 }
 
-func NewEchoServer(config Config) EchoServer {
-	return EchoServer{echo.New(), config}
+func NewEchoServer(config Config) *EchoServer {
+	return &EchoServer{echo.New(), config}
 }

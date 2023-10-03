@@ -27,6 +27,6 @@ func (hc *HealthController) RegisterRoutes(server server.Server) {
 	server.AddRoute("GET", "/health/live", liveness)
 }
 
-func NewHealthController(dbClient database.Client) HealthController {
-	return HealthController{dbClient}
+func NewHealthController(dbClient database.Client) *HealthController {
+	return &HealthController{dbClient}
 }
