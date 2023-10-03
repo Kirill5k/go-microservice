@@ -17,7 +17,7 @@ type PostgresClient struct {
 	DB *gorm.DB
 }
 
-func (c PostgresClient) Ready() bool {
+func (c *PostgresClient) Ready() bool {
 	var ready string
 	tx := c.DB.Raw("SELECT 1 as ready").Scan(&ready)
 	if tx.Error != nil {
@@ -26,7 +26,8 @@ func (c PostgresClient) Ready() bool {
 	return ready == "1"
 }
 
-func NewPostgresClient(config Config) (Client, error) {
+func NewPostgresClient(config Config) (PostgresClient, error) {
+	var client PostgresClient
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		config.Host,
@@ -44,7 +45,8 @@ func NewPostgresClient(config Config) (Client, error) {
 		QueryFields: true,
 	})
 	if err != nil {
-		return nil, err
+		return client, err
 	}
-	return PostgresClient{db}, nil
+	client = PostgresClient{db}
+	return client, nil
 }

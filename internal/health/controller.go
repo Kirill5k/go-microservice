@@ -11,7 +11,7 @@ type HealthController struct {
 	dbClient database.Client
 }
 
-func (hc HealthController) RegisterRoutes(server server.Server) {
+func (hc *HealthController) RegisterRoutes(server server.Server) {
 	readiness := func(ctx echo.Context) error {
 		isReady := hc.dbClient.Ready()
 		if isReady {
@@ -27,6 +27,6 @@ func (hc HealthController) RegisterRoutes(server server.Server) {
 	server.AddRoute("GET", "/health/live", liveness)
 }
 
-func NewHealthController(dbClient database.Client) server.Controller {
+func NewHealthController(dbClient database.Client) HealthController {
 	return HealthController{dbClient}
 }
