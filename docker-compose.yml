@@ -13,4 +13,3 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/init.sql
-
