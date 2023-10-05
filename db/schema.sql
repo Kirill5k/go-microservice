@@ -1,12 +1,12 @@
 CREATE SCHEMA wisdom;
 CREATE TABLE wisdom.services (
-  service_id UUID PRIMARY KEY,
+  id UUID PRIMARY KEY,
   name VARCHAR UNIQUE,
   price NUMERIC(12,2)
 );
 
 CREATE TABLE wisdom.customers (
-   customer_id UUID PRIMARY KEY,
+   id UUID PRIMARY KEY,
    first_name VARCHAR,
    last_name VARCHAR,
    email VARCHAR,
@@ -15,7 +15,7 @@ CREATE TABLE wisdom.customers (
 );
 
 CREATE TABLE wisdom.vendors (
-     vendor_id UUID PRIMARY KEY,
+     id UUID PRIMARY KEY,
      name VARCHAR NOT NULL,
      contact VARCHAR,
      phone VARCHAR,
@@ -24,7 +24,7 @@ CREATE TABLE wisdom.vendors (
 );
 
 CREATE TABLE wisdom.products (
-      product_id UUID PRIMARY KEY,
+      id UUID PRIMARY KEY,
       name VARCHAR UNIQUE,
       price NUMERIC (12,2),
       vendor_id UUID NOT NULL,
