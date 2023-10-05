@@ -14,8 +14,15 @@ type PostgresRepository struct {
 }
 
 func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Customer, error) {
-	var customers []Customer
-	result := pr.client.DB.WithContext(ctx).Where(Customer{Email: email}).Find(&customers)
+	var entities []Entity
+	result := pr.client.DB.WithContext(ctx).Where(Entity{Email: email}).Find(&entities)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	customers := make([]Customer, len(entities))
+	for i, entity := range entities {
+		customers[i] = entity.toDomain()
+	}
 	return customers, result.Error
 }
 

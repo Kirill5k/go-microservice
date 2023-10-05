@@ -9,6 +9,17 @@ type Entity struct {
 	Address   string
 }
 
+func (e *Entity) toDomain() Customer {
+	return Customer{
+		ID:        e.ID,
+		FirstName: e.FirstName,
+		LastName:  e.LastName,
+		Email:     e.Email,
+		Phone:     e.Phone,
+		Address:   e.Address,
+	}
+}
+
 type Customer struct {
 	ID        string `json:"id"`
 	FirstName string `json:"firstName"`
