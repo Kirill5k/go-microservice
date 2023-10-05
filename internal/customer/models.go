@@ -9,7 +9,7 @@ type Entity struct {
 	Address   string
 }
 
-func (e *Entity) toDomain() Customer {
+func toDomain(e Entity) Customer {
 	return Customer{
 		ID:        e.ID,
 		FirstName: e.FirstName,

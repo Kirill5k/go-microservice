@@ -2,6 +2,7 @@ package customer
 
 import (
 	"context"
+	"kirill5k/go/microservice/internal/common"
 	"kirill5k/go/microservice/internal/database"
 )
 
@@ -19,11 +20,7 @@ func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	customers := make([]Customer, len(entities))
-	for i, entity := range entities {
-		customers[i] = entity.toDomain()
-	}
-	return customers, result.Error
+	return common.Map(entities, toDomain), nil
 }
 
 func NewPostgresRepository(client *database.PostgresClient) *PostgresRepository {
