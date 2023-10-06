@@ -14,11 +14,11 @@ func main() {
 	}
 	srv := server.NewEchoServer(server.DefaultConfig())
 
-	controllers := []server.RouteRegister{
+	apis := []server.RouteRegister{
 		health.NewApi(db),
 	}
-	for _, controller := range controllers {
-		controller.RegisterRoutes(srv)
+	for _, api := range apis {
+		api.RegisterRoutes(srv)
 	}
 
 	if err := srv.Start(); err != nil {
