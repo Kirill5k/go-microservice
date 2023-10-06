@@ -9,7 +9,7 @@ CREATE TABLE wisdom.customers (
    id UUID PRIMARY KEY,
    first_name VARCHAR,
    last_name VARCHAR,
-   email VARCHAR,
+   email VARCHAR UNIQUE,
    phone VARCHAR,
    address VARCHAR
 );
@@ -19,7 +19,7 @@ CREATE TABLE wisdom.vendors (
      name VARCHAR NOT NULL,
      contact VARCHAR,
      phone VARCHAR,
-     email VARCHAR,
+     email VARCHAR UNIQUE,
      address VARCHAR
 );
 
@@ -28,5 +28,5 @@ CREATE TABLE wisdom.products (
       name VARCHAR UNIQUE,
       price NUMERIC (12,2),
       vendor_id UUID NOT NULL,
-      FOREIGN KEY (VENDOR_ID) references wisdom.vendors(VENDOR_ID)
+      FOREIGN KEY (VENDOR_ID) references wisdom.vendors(ID)
 );

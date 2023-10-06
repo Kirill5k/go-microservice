@@ -21,21 +21,21 @@ INSERT INTO wisdom.vendors (id, name, contact, phone, email, address) VALUES (ge
 INSERT INTO wisdom.vendors (id, name, contact, phone, email, address) VALUES (gen_random_uuid(),'Yakitri','Roy Wood','(699) 388-0362','rwood1f@tinypic.com','4 Dakota Alley, Stockton, CA 95219');
 
 
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Strong Joints Dog Supplement',5.87, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Rooxo'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Healthy Coat Dog Supplement',6.44, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Chatterpoint'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Probiotic Dog Treats',8.89, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Rhynyx'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Small Hypoallergenic Pet Bowl',6.55, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Abata'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Large Hypoallergenic Pet Bowl',8.14, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Abata'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Cat Hairball Remedy Gel',6.00, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Yakitri'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Probiotic Cat Treats',7.89, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Rhynyx'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Here Kitty Kitty Organic Catnip',7.75, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Kazio'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Calm Cat Anxiety Relief Spray',9.49, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Quaxo'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Medicated Dog Shampoo',8.73, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'DabZ'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Strong Joints Cat Supplement',5.53, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Edgepulse'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Healthy Coat Cat Supplement',9.56, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Photolist'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Senior Dog Vitamin Chews',9.66, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Talane'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Kidney Support Liquid Dietary Supplement',9.12, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Jaloo'));
-INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Advance Pet Oral Care Toothbrush and Toothpaste',9.55, (SELECT vendor_id FROM wisdom.vendors WHERE name = 'Babbleblab'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Strong Joints Dog Supplement',5.87, (SELECT id FROM wisdom.vendors WHERE name = 'Rooxo'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Healthy Coat Dog Supplement',6.44, (SELECT id FROM wisdom.vendors WHERE name = 'Chatterpoint'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Probiotic Dog Treats',8.89, (SELECT id FROM wisdom.vendors WHERE name = 'Rhynyx'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Small Hypoallergenic Pet Bowl',6.55, (SELECT id FROM wisdom.vendors WHERE name = 'Abata'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Large Hypoallergenic Pet Bowl',8.14, (SELECT id FROM wisdom.vendors WHERE name = 'Abata'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Cat Hairball Remedy Gel',6.00, (SELECT id FROM wisdom.vendors WHERE name = 'Yakitri'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Probiotic Cat Treats',7.89, (SELECT id FROM wisdom.vendors WHERE name = 'Rhynyx'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Here Kitty Kitty Organic Catnip',7.75, (SELECT id FROM wisdom.vendors WHERE name = 'Kazio'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Calm Cat Anxiety Relief Spray',9.49, (SELECT id FROM wisdom.vendors WHERE name = 'Quaxo'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Medicated Dog Shampoo',8.73, (SELECT id FROM wisdom.vendors WHERE name = 'DabZ'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Strong Joints Cat Supplement',5.53, (SELECT id FROM wisdom.vendors WHERE name = 'Edgepulse'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Healthy Coat Cat Supplement',9.56, (SELECT id FROM wisdom.vendors WHERE name = 'Photolist'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Senior Dog Vitamin Chews',9.66, (SELECT id FROM wisdom.vendors WHERE name = 'Talane'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Kidney Support Liquid Dietary Supplement',9.12, (SELECT id FROM wisdom.vendors WHERE name = 'Jaloo'));
+INSERT INTO wisdom.products (id, name, price, vendor_id) VALUES (gen_random_uuid(),'Advance Pet Oral Care Toothbrush and Toothpaste',9.55, (SELECT id FROM wisdom.vendors WHERE name = 'Babbleblab'));
 
 INSERT INTO wisdom.customers (id, first_name, last_name, email, phone, address) VALUES(gen_random_uuid(),'Cally','Reynolds','penatibus.et@lectusa.com','(901) 166-8355','556 Lakewood Park, Bismarck, ND 58505');
 INSERT INTO wisdom.customers (id, first_name, last_name, email, phone, address) VALUES(gen_random_uuid(),'Sydney','Bartlett','nibh@ultricesposuere.edu','(982) 231-7357','4829 Badeau Parkway, Chattanooga, TN 37405');
