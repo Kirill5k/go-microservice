@@ -1,6 +1,7 @@
 package main
 
 import (
+	"kirill5k/go/microservice/internal/customer"
 	"kirill5k/go/microservice/internal/database"
 	"kirill5k/go/microservice/internal/health"
 	"kirill5k/go/microservice/internal/server"
@@ -15,7 +16,8 @@ func main() {
 	srv := server.NewEchoServer(server.DefaultConfig())
 
 	apis := []server.RouteRegister{
-		health.NewApi(db),
+		health.NewModule(db).Api,
+		customer.NewModule(db).Api,
 	}
 	for _, api := range apis {
 		api.RegisterRoutes(srv)

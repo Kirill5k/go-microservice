@@ -6,10 +6,10 @@ type Api struct {
 	service Service
 }
 
-func (hc *Api) RegisterRoutes(server server.Server) {
+func (hc Api) RegisterRoutes(server server.Server) {
 
 }
 
-func NewApi(service Service) Api {
-	return Api{service}
+func NewApi(service Service) *Api {
+	return &Api{service}
 }
