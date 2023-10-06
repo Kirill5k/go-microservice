@@ -4,9 +4,13 @@ type Entity struct {
 	ID        string `gorm:"primaryKey"`
 	FirstName string
 	LastName  string
-	Email     string
+	Email     string `gorm:"uniqueIndex"`
 	Phone     string
 	Address   string
+}
+
+func (Entity) TableName() string {
+	return "wisdom.customers"
 }
 
 type Customer struct {

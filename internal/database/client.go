@@ -38,7 +38,7 @@ func NewPostgresClient(config Config) (*PostgresClient, error) {
 		common.If(config.SSLMode, "enable", "disable"),
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{TablePrefix: "wisdom."},
+		NamingStrategy: schema.NamingStrategy{TablePrefix: config.TablePrefix},
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
