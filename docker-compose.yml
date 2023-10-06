@@ -12,4 +12,5 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     volumes:
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/create-schema.sql
+      - ./db/data.sql:/docker-entrypoint-initdb.d/insert-data.sql
