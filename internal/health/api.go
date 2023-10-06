@@ -13,8 +13,7 @@ type Api struct {
 
 func (hc *Api) RegisterRoutes(server server.Server) {
 	readiness := func(ctx echo.Context) error {
-		isReady := hc.dbClient.Ready()
-		if isReady {
+		if hc.dbClient.Ready() {
 			return ctx.JSON(http.StatusOK, Status{"OK"})
 		}
 		return ctx.JSON(http.StatusServiceUnavailable, Status{"NOT_AVAILABLE"})

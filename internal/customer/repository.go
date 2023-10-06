@@ -11,10 +11,10 @@ type Repository interface {
 }
 
 type PostgresRepository struct {
-	client *database.PostgresClient
+	client database.PostgresClient
 }
 
-func NewPostgresRepository(client *database.PostgresClient) *PostgresRepository {
+func NewPostgresRepository(client database.PostgresClient) *PostgresRepository {
 	return &PostgresRepository{client}
 }
 
