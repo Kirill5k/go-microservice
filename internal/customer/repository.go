@@ -18,7 +18,16 @@ func NewPostgresRepository(client *database.PostgresClient) *PostgresRepository 
 	return &PostgresRepository{client}
 }
 
-func toDomain(e Entity) Customer {
+type customer struct {
+	ID        string `gorm:"primaryKey"`
+	FirstName string
+	LastName  string
+	Email     string `gorm:"uniqueIndex"`
+	Phone     string
+	Address   string
+}
+
+func toDomain(e customer) Customer {
 	return Customer{
 		ID:        e.ID,
 		FirstName: e.FirstName,
@@ -30,8 +39,8 @@ func toDomain(e Entity) Customer {
 }
 
 func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Customer, error) {
-	var entities []Entity
-	result := pr.client.DB.WithContext(ctx).Where(Entity{Email: email}).Find(&entities)
+	var entities []customer
+	result := pr.client.DB.WithContext(ctx).Where(customer{Email: email}).Find(&entities)
 	if result.Error != nil {
 		return nil, result.Error
 	}
