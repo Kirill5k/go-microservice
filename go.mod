@@ -3,6 +3,7 @@ module kirill5k/go/microservice
 go 1.21.1
 
 require (
+	github.com/google/uuid v1.3.1
 	github.com/labstack/echo/v4 v4.11.1
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.4
