@@ -8,6 +8,7 @@ import (
 
 type Server interface {
 	Start() error
+	PrefixRoute(prefix string)
 	AddRoute(method, path string, handler echo.HandlerFunc)
 }
 
@@ -29,6 +30,10 @@ func (s *EchoServer) Start() error {
 
 func (s *EchoServer) AddRoute(method, path string, handler echo.HandlerFunc) {
 	s.echo.Add(method, path, handler)
+}
+
+func (s *EchoServer) PrefixRoute(prefix string) {
+	s.echo.Group(prefix)
 }
 
 func NewEchoServer(config Config) *EchoServer {

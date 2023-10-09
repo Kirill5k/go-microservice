@@ -11,6 +11,7 @@ type Api struct {
 }
 
 func (hc *Api) RegisterRoutes(server server.Server) {
+	server.PrefixRoute("/customers")
 	getAll := func(ctx echo.Context) error {
 		email := ctx.QueryParam("email")
 		customers, err := hc.service.FindBy(ctx.Request().Context(), email)
@@ -19,7 +20,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		}
 		return ctx.JSON(http.StatusOK, customers)
 	}
-	server.AddRoute("GET", "/customers", getAll)
+	server.AddRoute("GET", "/", getAll)
 }
 
 func NewApi(service *Service) *Api {
