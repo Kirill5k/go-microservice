@@ -11,7 +11,7 @@ import (
 
 type Repository interface {
 	FindBy(ctx context.Context, email string) ([]Customer, error)
-	Create(ctx context.Context, customer NewCustomer) (Customer, error)
+	Create(ctx context.Context, customer *NewCustomer) (Customer, error)
 }
 
 type PostgresRepository struct {
@@ -42,7 +42,7 @@ func toDomain(e customer) Customer {
 	}
 }
 
-func newCustomer(c NewCustomer) customer {
+func newCustomer(c *NewCustomer) customer {
 	return customer{
 		ID:        uuid.NewString(),
 		FirstName: c.FirstName,
@@ -62,7 +62,7 @@ func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 	return common.Map(entities, toDomain), nil
 }
 
-func (pr *PostgresRepository) Create(ctx context.Context, newCust NewCustomer) (Customer, error) {
+func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) (Customer, error) {
 	var cust Customer
 	entity := newCustomer(newCust)
 	result := pr.client.DB.WithContext(ctx).Create(&entity)
