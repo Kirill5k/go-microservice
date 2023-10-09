@@ -20,7 +20,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		}
 		return ctx.JSON(http.StatusOK, customers)
 	}
-	server.AddRoute("GET", "/", getAll)
+	server.AddRoute("GET", "", getAll)
 }
 
 func NewApi(service *Service) *Api {

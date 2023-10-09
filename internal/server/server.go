@@ -17,8 +17,9 @@ type RouteRegister interface {
 }
 
 type EchoServer struct {
-	echo   *echo.Echo
-	config Config
+	config     Config
+	echo       *echo.Echo
+	routeGroup *echo.Group
 }
 
 func (s *EchoServer) Start() error {
@@ -29,13 +30,17 @@ func (s *EchoServer) Start() error {
 }
 
 func (s *EchoServer) AddRoute(method, path string, handler echo.HandlerFunc) {
-	s.echo.Add(method, path, handler)
+	if s.routeGroup != nil {
+		s.routeGroup.Add(method, path, handler)
+	} else {
+		s.echo.Add(method, path, handler)
+	}
 }
 
 func (s *EchoServer) PrefixRoute(prefix string) {
-	s.echo.Group(prefix)
+	s.routeGroup = s.echo.Group(prefix)
 }
 
 func NewEchoServer(config Config) *EchoServer {
-	return &EchoServer{echo.New(), config}
+	return &EchoServer{config, echo.New(), nil}
 }
