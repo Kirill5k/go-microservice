@@ -11,7 +11,7 @@ import (
 
 type Repository interface {
 	FindBy(ctx context.Context, email string) ([]Customer, error)
-	Create(ctx context.Context, customer NewCustomer) (*Customer, error)
+	Create(ctx context.Context, customer NewCustomer) (Customer, error)
 }
 
 type PostgresRepository struct {
