@@ -31,7 +31,7 @@ type customer struct {
 	Address   string
 }
 
-func toDomain(e customer) Customer {
+func toDomain(e *customer) Customer {
 	return Customer{
 		ID:        e.ID,
 		FirstName: e.FirstName,
@@ -42,8 +42,8 @@ func toDomain(e customer) Customer {
 	}
 }
 
-func newCustomer(c *NewCustomer) customer {
-	return customer{
+func (c *NewCustomer) toEntity() *customer {
+	return &customer{
 		ID:        uuid.NewString(),
 		FirstName: c.FirstName,
 		LastName:  c.LastName,
@@ -64,7 +64,7 @@ func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 
 func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) (Customer, error) {
 	var cust Customer
-	entity := newCustomer(newCust)
+	entity := newCust.toEntity()
 	result := pr.client.DB.WithContext(ctx).Create(&entity)
 	if result.Error == nil {
 		cust = toDomain(entity)
