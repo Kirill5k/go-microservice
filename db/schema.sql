@@ -14,7 +14,7 @@ CREATE TABLE wisdom.customers (
    address VARCHAR
 );
 
-CREATE INDEX IF NOT EXISTS customers_email_index ON wisdom.customers (email);
+CREATE UNIQUE INDEX IF NOT EXISTS customers_email_index ON wisdom.customers (email);
 
 CREATE TABLE wisdom.vendors (
      id UUID PRIMARY KEY,
