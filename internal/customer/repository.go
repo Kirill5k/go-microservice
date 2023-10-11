@@ -10,6 +10,7 @@ import (
 )
 
 type Repository interface {
+	Get(ctx context.Context, id string) (*Customer, error)
 	FindBy(ctx context.Context, email string) ([]Customer, error)
 	Create(ctx context.Context, customer *NewCustomer) (*Customer, error)
 }
@@ -31,17 +32,6 @@ type customer struct {
 	Address   string
 }
 
-func toDomain(e *customer) Customer {
-	return Customer{
-		ID:        e.ID,
-		FirstName: e.FirstName,
-		LastName:  e.LastName,
-		Email:     e.Email,
-		Phone:     e.Phone,
-		Address:   e.Address,
-	}
-}
-
 func (c *NewCustomer) toEntity() *customer {
 	return &customer{
 		ID:        uuid.NewString(),
@@ -51,6 +41,21 @@ func (c *NewCustomer) toEntity() *customer {
 		Phone:     c.Phone,
 		Address:   c.Address,
 	}
+}
+
+func (c *customer) toDomain() *Customer {
+	return &Customer{
+		ID:        c.ID,
+		FirstName: c.FirstName,
+		LastName:  c.LastName,
+		Email:     c.Email,
+		Phone:     c.Phone,
+		Address:   c.Address,
+	}
+}
+
+func toDomain(e *customer) Customer {
+	return *e.toDomain()
 }
 
 func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Customer, error) {
@@ -63,16 +68,28 @@ func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 }
 
 func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) (*Customer, error) {
-	var cust Customer
 	entity := newCust.toEntity()
 	result := pr.client.DB.WithContext(ctx).Create(&entity)
 	if result.Error == nil {
-		cust = toDomain(entity)
-		return &cust, nil
+		return entity.toDomain(), nil
 	}
 
 	if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
 		return nil, &database.ConflictError{}
+	}
+
+	return nil, result.Error
+}
+
+func (pr *PostgresRepository) Get(ctx context.Context, id string) (*Customer, error) {
+	var entity *customer
+	result := pr.client.DB.WithContext(ctx).Where(customer{ID: id}).First(&entity)
+	if result.Error == nil {
+		return entity.toDomain(), nil
+	}
+
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, &database.NotFoundError{ID: id, Entity: "customer"}
 	}
 
 	return nil, result.Error
