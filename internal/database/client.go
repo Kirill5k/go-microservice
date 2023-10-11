@@ -26,7 +26,7 @@ func (c *PostgresClient) Ready() bool {
 	return ready == "1"
 }
 
-func NewPostgresClient(config Config) (*PostgresClient, error) {
+func NewPostgresClient(config *PostgresConfig) (*PostgresClient, error) {
 	var client PostgresClient
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
