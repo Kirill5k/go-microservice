@@ -31,7 +31,7 @@ func NewPostgresClient(config *PostgresConfig) (*PostgresClient, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		config.Host,
-		config.User,
+		config.Username,
 		config.Password,
 		config.DBName,
 		config.Port,

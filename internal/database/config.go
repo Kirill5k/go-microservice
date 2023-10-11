@@ -3,11 +3,11 @@ package database
 type PostgresConfig struct {
 	Host        string
 	Port        int
-	DBName      string
-	TablePrefix string
-	User        string
+	DBName      string `mapstructure:"db-name"`
+	TablePrefix string `mapstructure:"table-prefix"`
+	Username    string
 	Password    string
-	SSLMode     bool
+	SSLMode     bool `mapstructure:"ssl-mode"`
 }
 
 func DefaultPostgresConfig() *PostgresConfig {
@@ -16,7 +16,7 @@ func DefaultPostgresConfig() *PostgresConfig {
 		Port:        5432,
 		DBName:      "postgres",
 		TablePrefix: "wisdom.",
-		User:        "postgres",
+		Username:    "postgres",
 		Password:    "postgres",
 		SSLMode:     false,
 	}
