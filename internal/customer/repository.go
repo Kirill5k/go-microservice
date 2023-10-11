@@ -15,12 +15,12 @@ type Repository interface {
 	Create(ctx context.Context, customer *NewCustomer) (*Customer, error)
 }
 
-type PostgresRepository struct {
+type postgresRepository struct {
 	client *database.PostgresClient
 }
 
-func NewPostgresRepository(client *database.PostgresClient) *PostgresRepository {
-	return &PostgresRepository{client}
+func NewPostgresRepository(client *database.PostgresClient) Repository {
+	return &postgresRepository{client}
 }
 
 type customer struct {
@@ -58,7 +58,7 @@ func toDomain(e *customer) Customer {
 	return *e.toDomain()
 }
 
-func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Customer, error) {
+func (pr *postgresRepository) FindBy(ctx context.Context, email string) ([]Customer, error) {
 	var entities []customer
 	result := pr.client.DB.WithContext(ctx).Where(customer{Email: email}).Find(&entities)
 	if result.Error != nil {
@@ -67,7 +67,7 @@ func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 	return common.Map(entities, toDomain), nil
 }
 
-func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) (*Customer, error) {
+func (pr *postgresRepository) Create(ctx context.Context, newCust *NewCustomer) (*Customer, error) {
 	entity := newCust.toEntity()
 	result := pr.client.DB.WithContext(ctx).Create(&entity)
 	if result.Error == nil {
@@ -81,7 +81,7 @@ func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) 
 	return nil, result.Error
 }
 
-func (pr *PostgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer, error) {
+func (pr *postgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer, error) {
 	var entity *customer
 	result := pr.client.DB.WithContext(ctx).Where(customer{ID: id}).First(&entity)
 	if result.Error == nil {
