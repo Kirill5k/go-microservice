@@ -17,13 +17,13 @@ type RouteRegister interface {
 }
 
 type echoServer struct {
-	config     Config
+	port       int
 	echo       *echo.Echo
 	routeGroup *echo.Group
 }
 
 func (s *echoServer) Start() error {
-	if err := s.echo.Start(fmt.Sprintf(":%d", s.config.Port)); err != nil && err != http.ErrServerClosed {
+	if err := s.echo.Start(fmt.Sprintf(":%d", s.port)); err != nil && err != http.ErrServerClosed {
 		return err
 	}
 	return nil
@@ -41,6 +41,6 @@ func (s *echoServer) PrefixRoute(prefix string) {
 	s.routeGroup = s.echo.Group(prefix)
 }
 
-func NewEchoServer(config Config) Server {
-	return &echoServer{config, echo.New(), nil}
+func NewEchoServer(config *Config) Server {
+	return &echoServer{config.Port, echo.New(), nil}
 }
