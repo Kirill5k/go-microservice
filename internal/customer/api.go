@@ -1,6 +1,7 @@
 package customer
 
 import (
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"kirill5k/go/microservice/internal/database"
 	"kirill5k/go/microservice/internal/server"
@@ -26,7 +27,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 
 	getById := func(ctx echo.Context) error {
 		id := ctx.Param("id")
-		customer, err := hc.service.Get(ctx.Request().Context(), id)
+		customer, err := hc.service.Get(ctx.Request().Context(), uuid.MustParse(id))
 		if err != nil {
 			switch err.(type) {
 			case *database.NotFoundError:

@@ -10,7 +10,7 @@ import (
 )
 
 type Repository interface {
-	Get(ctx context.Context, id string) (*Customer, error)
+	Get(ctx context.Context, id uuid.UUID) (*Customer, error)
 	FindBy(ctx context.Context, email string) ([]Customer, error)
 	Create(ctx context.Context, customer *NewCustomer) (*Customer, error)
 }
@@ -24,7 +24,7 @@ func NewPostgresRepository(client *database.PostgresClient) *PostgresRepository 
 }
 
 type customer struct {
-	ID        string `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey"`
 	FirstName string
 	LastName  string
 	Email     string `gorm:"uniqueIndex"`
@@ -34,7 +34,7 @@ type customer struct {
 
 func (c *NewCustomer) toEntity() *customer {
 	return &customer{
-		ID:        uuid.NewString(),
+		ID:        uuid.New(),
 		FirstName: c.FirstName,
 		LastName:  c.LastName,
 		Email:     c.Email,
@@ -81,7 +81,7 @@ func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) 
 	return nil, result.Error
 }
 
-func (pr *PostgresRepository) Get(ctx context.Context, id string) (*Customer, error) {
+func (pr *PostgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer, error) {
 	var entity *customer
 	result := pr.client.DB.WithContext(ctx).Where(customer{ID: id}).First(&entity)
 	if result.Error == nil {

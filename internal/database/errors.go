@@ -1,6 +1,9 @@
 package database
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/google/uuid"
+)
 
 type ConflictError struct {
 }
@@ -11,7 +14,7 @@ func (e *ConflictError) Error() string {
 
 type NotFoundError struct {
 	Entity string
-	ID     string
+	ID     uuid.UUID
 }
 
 func (e *NotFoundError) Error() string {

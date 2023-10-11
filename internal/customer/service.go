@@ -1,6 +1,9 @@
 package customer
 
-import "context"
+import (
+	"context"
+	"github.com/google/uuid"
+)
 
 type Service struct {
 	repository Repository
@@ -14,7 +17,7 @@ func (svc *Service) Create(ctx context.Context, newCust *NewCustomer) (*Customer
 	return svc.repository.Create(ctx, newCust)
 }
 
-func (svc *Service) Get(ctx context.Context, id string) (*Customer, error) {
+func (svc *Service) Get(ctx context.Context, id uuid.UUID) (*Customer, error) {
 	return svc.repository.Get(ctx, id)
 }
 

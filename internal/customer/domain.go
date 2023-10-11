@@ -1,12 +1,14 @@
 package customer
 
+import "github.com/google/uuid"
+
 type Customer struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	Address   string `json:"address"`
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
+	Address   string    `json:"address"`
 }
 
 type NewCustomer struct {
