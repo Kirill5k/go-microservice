@@ -20,3 +20,11 @@ type NotFoundError struct {
 func (e *NotFoundError) Error() string {
 	return fmt.Sprintf("unable to find %s with id %s", e.Entity, e.ID)
 }
+
+type InvalidIdError struct {
+	ID string
+}
+
+func (e *InvalidIdError) Error() string {
+	return fmt.Sprintf("%s is not a valid uuid", e.ID)
+}

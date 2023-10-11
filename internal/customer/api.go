@@ -26,8 +26,12 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 	server.AddRoute("GET", "", getAll)
 
 	getById := func(ctx echo.Context) error {
-		id := ctx.Param("id")
-		customer, err := hc.service.Get(ctx.Request().Context(), uuid.MustParse(id))
+		idString := ctx.Param("id")
+		id, err := uuid.Parse(ctx.Param(idString))
+		if err != nil {
+			return ctx.JSON(http.StatusBadRequest, common.InvalidIdError{ID: idString})
+		}
+		customer, err := hc.service.Get(ctx.Request().Context(), id)
 		if err != nil {
 			switch err.(type) {
 			case *common.NotFoundError:
