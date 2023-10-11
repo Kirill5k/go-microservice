@@ -11,7 +11,7 @@ import (
 
 type Repository interface {
 	FindBy(ctx context.Context, email string) ([]Customer, error)
-	Create(ctx context.Context, customer *NewCustomer) (Customer, error)
+	Create(ctx context.Context, customer *NewCustomer) (*Customer, error)
 }
 
 type PostgresRepository struct {
@@ -62,18 +62,18 @@ func (pr *PostgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 	return common.Map(entities, toDomain), nil
 }
 
-func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) (Customer, error) {
+func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) (*Customer, error) {
 	var cust Customer
 	entity := newCust.toEntity()
 	result := pr.client.DB.WithContext(ctx).Create(&entity)
 	if result.Error == nil {
 		cust = toDomain(entity)
-		return cust, nil
+		return &cust, nil
 	}
 
 	if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
-		return cust, &database.ConflictError{}
+		return nil, &database.ConflictError{}
 	}
 
-	return cust, result.Error
+	return nil, result.Error
 }
