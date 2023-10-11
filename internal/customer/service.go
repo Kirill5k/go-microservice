@@ -14,6 +14,10 @@ func (svc *Service) Create(ctx context.Context, newCust *NewCustomer) (*Customer
 	return svc.repository.Create(ctx, newCust)
 }
 
+func (svc *Service) Get(ctx context.Context, id string) (*Customer, error) {
+	return svc.repository.Get(ctx, id)
+}
+
 func NewService(repository Repository) *Service {
 	return &Service{repository}
 }
