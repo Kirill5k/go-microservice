@@ -3,7 +3,7 @@ package customer
 import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"kirill5k/go/microservice/internal/database"
+	"kirill5k/go/microservice/internal/common"
 	"kirill5k/go/microservice/internal/server"
 	"net/http"
 )
@@ -30,7 +30,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		customer, err := hc.service.Get(ctx.Request().Context(), uuid.MustParse(id))
 		if err != nil {
 			switch err.(type) {
-			case *database.NotFoundError:
+			case *common.NotFoundError:
 				return ctx.JSON(http.StatusNotFound, err)
 			default:
 				return ctx.JSON(http.StatusInternalServerError, err)
@@ -48,7 +48,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		cust, err := hc.service.Create(ctx.Request().Context(), newCust)
 		if err != nil {
 			switch err.(type) {
-			case *database.ConflictError:
+			case *common.ConflictError:
 				return ctx.JSON(http.StatusConflict, err)
 			default:
 				return ctx.JSON(http.StatusInternalServerError, err)

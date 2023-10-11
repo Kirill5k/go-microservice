@@ -75,7 +75,7 @@ func (pr *PostgresRepository) Create(ctx context.Context, newCust *NewCustomer) 
 	}
 
 	if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
-		return nil, &database.ConflictError{}
+		return nil, &common.ConflictError{}
 	}
 
 	return nil, result.Error
@@ -89,7 +89,7 @@ func (pr *PostgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer,
 	}
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, &database.NotFoundError{ID: id, Entity: "customer"}
+		return nil, &common.NotFoundError{ID: id, Entity: "customer"}
 	}
 
 	return nil, result.Error
