@@ -24,6 +24,21 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 	}
 	server.AddRoute("GET", "", getAll)
 
+	getById := func(ctx echo.Context) error {
+		id := ctx.Param("id")
+		customer, err := hc.service.Get(ctx.Request().Context(), id)
+		if err != nil {
+			switch err.(type) {
+			case *database.NotFoundError:
+				return ctx.JSON(http.StatusNotFound, err)
+			default:
+				return ctx.JSON(http.StatusInternalServerError, err)
+			}
+		}
+		return ctx.JSON(http.StatusOK, customer)
+	}
+	server.AddRoute("GET", "/:id", getById)
+
 	createNew := func(ctx echo.Context) error {
 		newCust := new(NewCustomer)
 		if err := ctx.Bind(newCust); err != nil {
