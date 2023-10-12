@@ -15,7 +15,7 @@ type Api struct {
 func (hc *Api) RegisterRoutes(server server.Server) {
 	parseId := func(ctx echo.Context) (uuid.UUID, error) {
 		idString := ctx.Param("id")
-		id, err := uuid.Parse(ctx.Param(idString))
+		id, err := uuid.Parse(idString)
 		if err != nil {
 			return id, &common.InvalidIdError{ID: idString}
 		}
