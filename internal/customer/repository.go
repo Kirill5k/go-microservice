@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"kirill5k/go/microservice/internal/common"
 	"kirill5k/go/microservice/internal/database"
 )
@@ -13,6 +14,7 @@ type Repository interface {
 	Get(ctx context.Context, id uuid.UUID) (*Customer, error)
 	FindBy(ctx context.Context, email string) ([]Customer, error)
 	Create(ctx context.Context, customer *NewCustomer) (*Customer, error)
+	Update(ctx context.Context, customer *Customer) (*Customer, error)
 }
 
 type postgresRepository struct {
@@ -35,6 +37,17 @@ type customer struct {
 func (c *NewCustomer) toEntity() *customer {
 	return &customer{
 		ID:        uuid.New(),
+		FirstName: c.FirstName,
+		LastName:  c.LastName,
+		Email:     c.Email,
+		Phone:     c.Phone,
+		Address:   c.Address,
+	}
+}
+
+func (c *Customer) toEntity() *customer {
+	return &customer{
+		ID:        c.ID,
 		FirstName: c.FirstName,
 		LastName:  c.LastName,
 		Email:     c.Email,
@@ -93,4 +106,18 @@ func (pr *postgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer,
 	}
 
 	return nil, result.Error
+}
+
+func (pr *postgresRepository) Update(ctx context.Context, cust *Customer) (*Customer, error) {
+	result := pr.client.DB.WithContext(ctx).Clauses(clause.Returning{}).Where(customer{ID: cust.ID}).Updates(cust.toEntity())
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, &common.NotFoundError{ID: cust.ID, Entity: "customer"}
+	}
+
+	return cust, nil
 }
