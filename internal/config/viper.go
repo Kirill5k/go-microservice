@@ -18,12 +18,12 @@ func LoadViperConfig() *Config {
 	v.SetConfigType("yaml")
 	v.AddConfigPath("./internal/config")
 	if err := v.ReadInConfig(); err != nil {
-		log.Fatalf("failed to read viper config: %v", err)
+		log.Fatalf("failed to read viper config. %v", err)
 	}
 
 	var c Config
 	if err := v.Unmarshal(&c); err != nil {
-		log.Fatalf("unable to decode viper config into struct: %v", err)
+		log.Fatalf("failed to decode viper config into struct. %v", err)
 	}
 	return &c
 }
