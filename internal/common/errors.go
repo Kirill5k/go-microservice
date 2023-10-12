@@ -28,3 +28,12 @@ type InvalidIdError struct {
 func (e *InvalidIdError) Error() string {
 	return fmt.Sprintf("%s is not a valid uuid", e.ID)
 }
+
+type IdMissmatchError struct {
+	PathID uuid.UUID
+	BodyID uuid.UUID
+}
+
+func (e *IdMissmatchError) Error() string {
+	return fmt.Sprintf("id in path %s is different from id in body %s", e.PathID, e.BodyID)
+}

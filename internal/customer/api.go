@@ -13,6 +13,15 @@ type Api struct {
 }
 
 func (hc *Api) RegisterRoutes(server server.Server) {
+	parseId := func(ctx echo.Context) (uuid.UUID, error) {
+		idString := ctx.Param("id")
+		id, err := uuid.Parse(ctx.Param(idString))
+		if err != nil {
+			return id, &common.InvalidIdError{ID: idString}
+		}
+		return id, nil
+	}
+
 	server.PrefixRoute("/customers")
 
 	getAll := func(ctx echo.Context) error {
@@ -26,10 +35,9 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 	server.AddRoute("GET", "", getAll)
 
 	getById := func(ctx echo.Context) error {
-		idString := ctx.Param("id")
-		id, err := uuid.Parse(ctx.Param(idString))
+		id, err := parseId(ctx)
 		if err != nil {
-			return ctx.JSON(http.StatusBadRequest, common.InvalidIdError{ID: idString})
+			return ctx.JSON(http.StatusBadRequest, err)
 		}
 		customer, err := hc.service.Get(ctx.Request().Context(), id)
 		if err != nil {
@@ -44,7 +52,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 	}
 	server.AddRoute("GET", "/:id", getById)
 
-	createNew := func(ctx echo.Context) error {
+	create := func(ctx echo.Context) error {
 		newCust := new(NewCustomer)
 		if err := ctx.Bind(newCust); err != nil {
 			return ctx.JSON(http.StatusBadRequest, err)
@@ -60,7 +68,24 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		}
 		return ctx.JSON(http.StatusCreated, cust)
 	}
-	server.AddRoute("POST", "", createNew)
+	server.AddRoute("POST", "", create)
+
+	update := func(ctx echo.Context) error {
+		id, err := parseId(ctx)
+		if err != nil {
+			return ctx.JSON(http.StatusBadRequest, err)
+		}
+		cust := new(Customer)
+		if err := ctx.Bind(cust); err != nil {
+			return ctx.JSON(http.StatusBadRequest, err)
+		}
+		if cust.ID != id {
+			return ctx.JSON(http.StatusBadRequest, common.IdMissmatchError{BodyID: cust.ID, PathID: id})
+		}
+
+		return ctx.JSON(http.StatusOK, cust)
+	}
+	server.AddRoute("PUT", "/:id", update)
 }
 
 func NewApi(service *Service) *Api {
