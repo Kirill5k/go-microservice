@@ -83,7 +83,19 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 			return ctx.JSON(http.StatusBadRequest, common.IdMissmatchError{BodyID: cust.ID, PathID: id})
 		}
 
-		return ctx.JSON(http.StatusOK, cust)
+		res, err := hc.service.Update(ctx.Request().Context(), cust)
+		if err != nil {
+			switch err.(type) {
+			case *common.NotFoundError:
+				return ctx.JSON(http.StatusNotFound, err)
+			case *common.ConflictError:
+				return ctx.JSON(http.StatusConflict, err)
+			default:
+				return ctx.JSON(http.StatusInternalServerError, err)
+			}
+		}
+
+		return ctx.JSON(http.StatusOK, res)
 	}
 	server.AddRoute("PUT", "/:id", update)
 }

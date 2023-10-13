@@ -21,6 +21,10 @@ func (svc *Service) Get(ctx context.Context, id uuid.UUID) (*Customer, error) {
 	return svc.repository.Get(ctx, id)
 }
 
+func (svc *Service) Update(ctx context.Context, cust *Customer) (*Customer, error) {
+	return svc.repository.Update(ctx, cust)
+}
+
 func NewService(repository Repository) *Service {
 	return &Service{repository}
 }
