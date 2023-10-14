@@ -99,14 +99,14 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 	}
 	server.AddRoute("PUT", "/:id", update)
 
-	delete := func(ctx echo.Context) error {
+	deleteById := func(ctx echo.Context) error {
 		id, err := parseId(ctx)
 		if err != nil {
 			return ctx.JSON(http.StatusBadRequest, err)
 		}
 		return ctx.JSON(http.StatusNoContent, res)
 	}
-	server.AddRoute("DELETE", "/:id", delete)
+	server.AddRoute("DELETE", "/:id", deleteById)
 }
 
 func NewApi(service *Service) *Api {
