@@ -15,6 +15,7 @@ type Repository interface {
 	FindBy(ctx context.Context, email string) ([]Customer, error)
 	Create(ctx context.Context, customer *NewCustomer) (*Customer, error)
 	Update(ctx context.Context, customer *Customer) (*Customer, error)
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type postgresRepository struct {
@@ -120,6 +121,20 @@ func (pr *postgresRepository) Update(ctx context.Context, cust *Customer) (*Cust
 	}
 
 	return cust, nil
+}
+
+func (pr *postgresRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := pr.client.DB.WithContext(ctx).Delete(customer{ID: id})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &common.NotFoundError{ID: id, Entity: "customer"}
+	}
+
+	return nil
 }
 
 //TODO: isConflict error
