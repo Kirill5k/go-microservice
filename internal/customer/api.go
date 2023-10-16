@@ -113,7 +113,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 				return ctx.JSON(http.StatusInternalServerError, err)
 			}
 		}
-		return ctx.NoContent(http.StatusNoContent)
+		return ctx.NoContent(http.StatusResetContent)
 	}
 	server.AddRoute("DELETE", "/:id", deleteById)
 }
