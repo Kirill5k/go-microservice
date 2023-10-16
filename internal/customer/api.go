@@ -104,7 +104,16 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		if err != nil {
 			return ctx.JSON(http.StatusBadRequest, err)
 		}
-		return ctx.JSON(http.StatusNoContent, res)
+
+		if err := hc.service.Delete(ctx.Request().Context(), id); err != nil {
+			switch err.(type) {
+			case *common.NotFoundError:
+				return ctx.JSON(http.StatusNotFound, err)
+			default:
+				return ctx.JSON(http.StatusInternalServerError, err)
+			}
+		}
+		return ctx.NoContent(http.StatusNoContent)
 	}
 	server.AddRoute("DELETE", "/:id", deleteById)
 }
