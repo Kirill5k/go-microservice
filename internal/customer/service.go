@@ -25,6 +25,10 @@ func (svc *Service) Update(ctx context.Context, cust *Customer) (*Customer, erro
 	return svc.repository.Update(ctx, cust)
 }
 
+func (svc *Service) Delete(ctx context.Context, id uuid.UUID) error {
+	return svc.repository.Delete(ctx, id)
+}
+
 func NewService(repository Repository) *Service {
 	return &Service{repository}
 }
