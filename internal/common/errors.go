@@ -6,10 +6,11 @@ import (
 )
 
 type ConflictError struct {
+	Detail string
 }
 
 func (e *ConflictError) Error() string {
-	return "attempted to create a record with an existing key"
+	return fmt.Sprintf("attempted to create a record with an existing key: %s", e.Detail)
 }
 
 type NotFoundError struct {

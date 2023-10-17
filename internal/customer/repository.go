@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"kirill5k/go/microservice/internal/common"
@@ -76,7 +77,7 @@ func (pr *postgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 	var entities []customer
 	result := pr.client.DB.WithContext(ctx).Where(customer{Email: email}).Find(&entities)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, handleError(result.Error)
 	}
 	return common.Map(entities, toDomain), nil
 }
@@ -84,15 +85,11 @@ func (pr *postgresRepository) FindBy(ctx context.Context, email string) ([]Custo
 func (pr *postgresRepository) Create(ctx context.Context, newCust *NewCustomer) (*Customer, error) {
 	entity := newCust.toEntity()
 	result := pr.client.DB.WithContext(ctx).Create(&entity)
-	if result.Error == nil {
-		return entity.toDomain(), nil
+	if result.Error != nil {
+		return nil, handleError(result.Error)
 	}
 
-	if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
-		return nil, &common.ConflictError{}
-	}
-
-	return nil, result.Error
+	return entity.toDomain(), nil
 }
 
 func (pr *postgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer, error) {
@@ -106,14 +103,14 @@ func (pr *postgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer,
 		return nil, &common.NotFoundError{ID: id, Entity: "customer"}
 	}
 
-	return nil, result.Error
+	return nil, handleError(result.Error)
 }
 
 func (pr *postgresRepository) Update(ctx context.Context, cust *Customer) (*Customer, error) {
 	result := pr.client.DB.WithContext(ctx).Clauses(clause.Returning{}).Where(customer{ID: cust.ID}).Updates(cust.toEntity())
 
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, handleError(result.Error)
 	}
 
 	if result.RowsAffected == 0 {
@@ -127,7 +124,7 @@ func (pr *postgresRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	result := pr.client.DB.WithContext(ctx).Delete(customer{ID: id})
 
 	if result.Error != nil {
-		return result.Error
+		return handleError(result.Error)
 	}
 
 	if result.RowsAffected == 0 {
@@ -137,4 +134,18 @@ func (pr *postgresRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-//TODO: isConflict error
+func handleError(err error) error {
+	switch e := err.(type) {
+	case *pgconn.PgError:
+		if e.Code == "23505" {
+			return &common.ConflictError{Detail: e.Detail}
+		}
+		return errors.New(e.Message)
+	default:
+		if errors.Is(e, gorm.ErrDuplicatedKey) {
+			return &common.ConflictError{Detail: e.Error()}
+		}
+		return e
+	}
+
+}
