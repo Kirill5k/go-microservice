@@ -3,7 +3,11 @@ package server
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
+	"github.com/ziflex/lecho/v3"
 	"net/http"
+	"os"
 )
 
 type Server interface {
@@ -42,5 +46,15 @@ func (s *echoServer) PrefixRoute(prefix string) {
 }
 
 func NewEchoServer(config *Config) Server {
-	return &echoServer{config.Port, echo.New(), nil}
+	e := echo.New()
+	logger := lecho.New(
+		os.Stdout,
+		lecho.WithLevel(log.DEBUG),
+		lecho.WithTimestamp(),
+		lecho.WithCaller(),
+	)
+	e.Logger = logger
+	e.Use(middleware.RequestID())
+	e.Use(lecho.Middleware(lecho.Config{Logger: logger}))
+	return &echoServer{config.Port, e, nil}
 }
