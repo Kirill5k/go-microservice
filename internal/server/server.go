@@ -10,6 +10,10 @@ import (
 	"os"
 )
 
+type Config struct {
+	Port int
+}
+
 type Server interface {
 	Start() error
 	PrefixRoute(prefix string)
