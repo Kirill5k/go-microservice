@@ -16,7 +16,7 @@ func LoadViperConfig() *Config {
 	v := viper.New()
 	v.SetConfigName("application")
 	v.SetConfigType("yaml")
-	v.AddConfigPath("./internal/config")
+	v.AddConfigPath("./config")
 	if err := v.ReadInConfig(); err != nil {
 		log.Fatalf("failed to read viper config. %v", err)
 	}
