@@ -1,13 +1,18 @@
 package server
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
+	"github.com/rs/zerolog/log"
 	"github.com/ziflex/lecho/v3"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 )
 
 type Config struct {
@@ -15,7 +20,7 @@ type Config struct {
 }
 
 type Server interface {
-	Start() error
+	StartAndWaitForShutdown()
 	PrefixRoute(prefix string)
 	AddRoute(method, path string, handler echo.HandlerFunc)
 }
@@ -30,11 +35,26 @@ type echoServer struct {
 	routeGroup *echo.Group
 }
 
-func (s *echoServer) Start() error {
-	if err := s.echo.Start(fmt.Sprintf(":%d", s.port)); err != nil && err != http.ErrServerClosed {
-		return err
+func (s *echoServer) StartAndWaitForShutdown() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		log.Info().Msgf("Starting Echo server on port: %d", s.port)
+		if err := s.echo.Start(fmt.Sprintf(":%d", s.port)); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Err(err).Msg("Error starting Echo server")
+		}
+	}()
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
+	<-sigChan
+
+	log.Info().Msg("Shutting down Echo server")
+	if err := s.echo.Shutdown(context.Background()); err != nil {
+		log.Err(err).Msg("Failed to shut down Echo server")
 	}
-	return nil
+	wg.Wait()
 }
 
 func (s *echoServer) AddRoute(method, path string, handler echo.HandlerFunc) {
@@ -52,8 +72,7 @@ func (s *echoServer) PrefixRoute(prefix string) {
 func NewEchoServer(config *Config) Server {
 	e := echo.New()
 	logger := lecho.New(
-		os.Stdout,
-		lecho.WithLevel(log.DEBUG),
+		log.Logger,
 		lecho.WithTimestamp(),
 		lecho.WithCaller(),
 	)

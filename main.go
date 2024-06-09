@@ -25,7 +25,5 @@ func main() {
 		api.RegisterRoutes(srv)
 	}
 
-	if err := srv.Start(); err != nil {
-		log.Fatalf("failed to start http server: %s", err)
-	}
+	srv.StartAndWaitForShutdown()
 }
