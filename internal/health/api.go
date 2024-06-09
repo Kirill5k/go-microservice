@@ -2,30 +2,59 @@ package health
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 	"kirill5k/go/microservice/internal/database"
 	"kirill5k/go/microservice/internal/server"
+	"net"
 	"net/http"
+	"os"
+	"time"
 )
 
 type Api struct {
-	dbClient database.Client
+	dbClient    database.Client
+	ipAddress   string
+	appVersion  string
+	startupTime time.Time
 }
 
-func (hc *Api) RegisterRoutes(server server.Server) {
+func (api *Api) RegisterRoutes(server server.Server) {
 	readiness := func(ctx echo.Context) error {
-		if hc.dbClient.Ready() {
-			return ctx.JSON(http.StatusOK, Status{"OK"})
+		if api.dbClient.Ready() {
+			return ctx.JSON(http.StatusOK, StatusUp(api.startupTime, api.ipAddress, api.appVersion))
 		}
-		return ctx.JSON(http.StatusServiceUnavailable, Status{"NOT_AVAILABLE"})
+		return ctx.JSON(http.StatusServiceUnavailable, StatusDown(api.startupTime, api.ipAddress, api.appVersion))
 	}
 	server.AddRoute("GET", "/health/ready", readiness)
 
 	liveness := func(ctx echo.Context) error {
-		return ctx.JSON(http.StatusOK, Status{"OK"})
+		return ctx.JSON(http.StatusOK, StatusUp(api.startupTime, api.ipAddress, api.appVersion))
 	}
 	server.AddRoute("GET", "/health/live", liveness)
 }
 
 func NewApi(dbClient database.Client) *Api {
-	return &Api{dbClient}
+	getIpaddress := func() string {
+		conn, err := net.Dial("udp", "8.8.8.8:80")
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to obtain ip address")
+		}
+		defer func(conn net.Conn) {
+			err := conn.Close()
+			if err != nil {
+				log.Fatal().Err(err).Msg("failed to obtain ip address")
+			}
+		}(conn)
+
+		localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+		return localAddr.String()
+	}
+
+	return &Api{
+		dbClient:    dbClient,
+		ipAddress:   getIpaddress(),
+		appVersion:  os.Getenv("VERSION"),
+		startupTime: time.Now(),
+	}
 }
