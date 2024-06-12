@@ -24,17 +24,16 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 
 	server.PrefixRoute("/customers")
 
-	getAll := func(ctx echo.Context) error {
+	server.AddRoute("GET", "", func(ctx echo.Context) error {
 		email := ctx.QueryParam("email")
 		customers, err := hc.service.FindBy(ctx.Request().Context(), email)
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, err)
 		}
 		return ctx.JSON(http.StatusOK, customers)
-	}
-	server.AddRoute("GET", "", getAll)
+	})
 
-	getById := func(ctx echo.Context) error {
+	server.AddRoute("GET", "/:id", func(ctx echo.Context) error {
 		id, err := parseId(ctx)
 		if err != nil {
 			return ctx.JSON(http.StatusBadRequest, err)
@@ -49,10 +48,9 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 			}
 		}
 		return ctx.JSON(http.StatusOK, customer)
-	}
-	server.AddRoute("GET", "/:id", getById)
+	})
 
-	create := func(ctx echo.Context) error {
+	server.AddRoute("POST", "", func(ctx echo.Context) error {
 		newCust := new(NewCustomer)
 		if err := ctx.Bind(newCust); err != nil {
 			return ctx.JSON(http.StatusBadRequest, err)
@@ -67,10 +65,9 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 			}
 		}
 		return ctx.JSON(http.StatusCreated, cust)
-	}
-	server.AddRoute("POST", "", create)
+	})
 
-	update := func(ctx echo.Context) error {
+	server.AddRoute("PUT", "/:id", func(ctx echo.Context) error {
 		id, err := parseId(ctx)
 		if err != nil {
 			return ctx.JSON(http.StatusBadRequest, err)
@@ -96,8 +93,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		}
 
 		return ctx.JSON(http.StatusOK, res)
-	}
-	server.AddRoute("PUT", "/:id", update)
+	})
 
 	deleteById := func(ctx echo.Context) error {
 		id, err := parseId(ctx)

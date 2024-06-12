@@ -19,18 +19,16 @@ type Api struct {
 }
 
 func (api *Api) RegisterRoutes(server server.Server) {
-	readiness := func(ctx echo.Context) error {
+	server.AddRoute("GET", "/health/ready", func(ctx echo.Context) error {
 		if api.dbClient.Ready() {
 			return ctx.JSON(http.StatusOK, StatusUp(api.startupTime, api.ipAddress, api.appVersion))
 		}
 		return ctx.JSON(http.StatusServiceUnavailable, StatusDown(api.startupTime, api.ipAddress, api.appVersion))
-	}
-	server.AddRoute("GET", "/health/ready", readiness)
+	})
 
-	liveness := func(ctx echo.Context) error {
+	server.AddRoute("GET", "/health/live", func(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, StatusUp(api.startupTime, api.ipAddress, api.appVersion))
-	}
-	server.AddRoute("GET", "/health/live", liveness)
+	})
 }
 
 func NewApi(dbClient database.Client) *Api {
