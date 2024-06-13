@@ -3,7 +3,7 @@ package customer
 import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"kirill5k/go/microservice/internal/common"
+	"kirill5k/go/microservice/internal/common/errors"
 	"kirill5k/go/microservice/internal/server"
 	"net/http"
 )
@@ -17,7 +17,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		idString := ctx.Param("id")
 		id, err := uuid.Parse(idString)
 		if err != nil {
-			return id, &common.InvalidIdError{ID: idString}
+			return id, &errors.InvalidIdError{ID: idString}
 		}
 		return id, nil
 	}
@@ -41,7 +41,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		customer, err := hc.service.Get(ctx.Request().Context(), id)
 		if err != nil {
 			switch err.(type) {
-			case *common.NotFoundError:
+			case *errors.NotFoundError:
 				return ctx.JSON(http.StatusNotFound, err)
 			default:
 				return ctx.JSON(http.StatusInternalServerError, err)
@@ -58,7 +58,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 		cust, err := hc.service.Create(ctx.Request().Context(), newCust)
 		if err != nil {
 			switch err.(type) {
-			case *common.ConflictError:
+			case *errors.ConflictError:
 				return ctx.JSON(http.StatusConflict, err)
 			default:
 				return ctx.JSON(http.StatusInternalServerError, err)
@@ -77,15 +77,15 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 			return ctx.JSON(http.StatusBadRequest, err)
 		}
 		if cust.ID != id {
-			return ctx.JSON(http.StatusBadRequest, common.IdMissmatchError{BodyID: cust.ID, PathID: id})
+			return ctx.JSON(http.StatusBadRequest, errors.IdMissmatchError{BodyID: cust.ID, PathID: id})
 		}
 
 		res, err := hc.service.Update(ctx.Request().Context(), cust)
 		if err != nil {
 			switch err.(type) {
-			case *common.NotFoundError:
+			case *errors.NotFoundError:
 				return ctx.JSON(http.StatusNotFound, err)
-			case *common.ConflictError:
+			case *errors.ConflictError:
 				return ctx.JSON(http.StatusConflict, err)
 			default:
 				return ctx.JSON(http.StatusInternalServerError, err)
@@ -103,7 +103,7 @@ func (hc *Api) RegisterRoutes(server server.Server) {
 
 		if err := hc.service.Delete(ctx.Request().Context(), id); err != nil {
 			switch err.(type) {
-			case *common.NotFoundError:
+			case *errors.NotFoundError:
 				return ctx.JSON(http.StatusNotFound, err)
 			default:
 				return ctx.JSON(http.StatusInternalServerError, err)

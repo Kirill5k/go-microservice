@@ -1,9 +1,23 @@
-package common
+package errors
 
 import (
+	"errors"
+	_ "errors"
 	"fmt"
 	"github.com/google/uuid"
 )
+
+func Is(err, target error) bool {
+	return errors.Is(err, target)
+}
+
+type AppError struct {
+	Message string
+}
+
+func (e *AppError) Error() string {
+	return e.Message
+}
 
 type ConflictError struct {
 	Detail string

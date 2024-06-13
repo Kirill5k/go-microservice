@@ -2,12 +2,12 @@ package customer
 
 import (
 	"context"
-	"errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"kirill5k/go/microservice/internal/common"
+	"kirill5k/go/microservice/internal/common/errors"
 	"kirill5k/go/microservice/internal/database"
 )
 
@@ -100,7 +100,7 @@ func (pr *postgresRepository) Get(ctx context.Context, id uuid.UUID) (*Customer,
 	}
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, &common.NotFoundError{ID: id, Entity: "customer"}
+		return nil, &errors.NotFoundError{ID: id, Entity: "customer"}
 	}
 
 	return nil, handleError(result.Error)
@@ -114,7 +114,7 @@ func (pr *postgresRepository) Update(ctx context.Context, cust *Customer) (*Cust
 	}
 
 	if result.RowsAffected == 0 {
-		return nil, &common.NotFoundError{ID: cust.ID, Entity: "customer"}
+		return nil, &errors.NotFoundError{ID: cust.ID, Entity: "customer"}
 	}
 
 	return cust, nil
@@ -128,7 +128,7 @@ func (pr *postgresRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	}
 
 	if result.RowsAffected == 0 {
-		return &common.NotFoundError{ID: id, Entity: "customer"}
+		return &errors.NotFoundError{ID: id, Entity: "customer"}
 	}
 
 	return nil
@@ -138,12 +138,12 @@ func handleError(err error) error {
 	switch e := err.(type) {
 	case *pgconn.PgError:
 		if e.Code == "23505" {
-			return &common.ConflictError{Detail: e.Detail}
+			return &errors.ConflictError{Detail: e.Detail}
 		}
-		return errors.New(e.Message)
+		return &errors.AppError{Message: e.Message}
 	default:
 		if errors.Is(e, gorm.ErrDuplicatedKey) {
-			return &common.ConflictError{Detail: e.Error()}
+			return &errors.ConflictError{Detail: e.Error()}
 		}
 		return e
 	}
