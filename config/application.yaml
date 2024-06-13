@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 postgres:
-  host: "localhost"
-  port: 5432
-  db-name: "postgres"
-  table-prefix: "wisdom."
-  username: "postgres"
-  password: "postgres"
-  ssl-mode: false
+  host: ${POSTGRES_HOST:localhost}
+  port: ${POSTGRES_PORT:5432}
+  db-name: ${POSTGRES_DN_NAME:postgres}
+  table-prefix: ${POSTGRES_TABLE_PREFIX:wisdom.}
+  username: ${POSTGRES_USERNAME:postgres}
+  password: ${POSTGRES_PASSWORD:postgres}
+  ssl-mode: ${POSTGRES_SSL_MODE:false}
